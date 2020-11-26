@@ -20,7 +20,7 @@ internal class LogRepository(private val logDao: LogDao) {
             throw IllegalStateException("Page must not be zero or negative")
         }
 
-        return logDao.getLogs(LIMIT, page * limit)
+        return logDao.getLogs(limit, page * limit)
     }
 
     suspend fun clearLogs(pushedLogs: List<LogModel>) {

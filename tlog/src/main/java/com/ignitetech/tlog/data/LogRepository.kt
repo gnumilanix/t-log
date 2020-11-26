@@ -16,7 +16,7 @@ internal class LogRepository(private val logDao: LogDao) {
     }
 
     suspend fun getLogs(page: Int, limit: Int = LIMIT): List<LogModel> {
-        if (page < 1) {
+        if (page < 0) {
             throw IllegalStateException("Page must not be zero or negative")
         }
 

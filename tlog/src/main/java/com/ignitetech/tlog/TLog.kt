@@ -201,7 +201,7 @@ object TLog {
     }
 
     suspend fun dispatchLogs(dispatcher: suspend (page: Int, logs: List<LogModel>) -> Boolean) {
-        for (page in 1..getLogPages()) {
+        for (page in 0..getLogPages()) {
             val logs = getLogs(false, page)
 
             if (logs.isEmpty()) {

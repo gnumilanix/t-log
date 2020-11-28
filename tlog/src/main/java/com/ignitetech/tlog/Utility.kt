@@ -1,6 +1,5 @@
 package com.ignitetech.tlog
 
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -14,16 +13,4 @@ fun getCurrentTime(): String {
 
 fun getFormattedTime(date: Date): String {
     return DATE_FORMAT.format(date)
-}
-
-fun getLogLevelName(messageLogLevel: Int): String {
-    return when (messageLogLevel) {
-        Log.VERBOSE -> "VERBOSE"
-        Log.DEBUG -> "DEBUG"
-        Log.INFO -> "INFO"
-        Log.WARN -> "WARN"
-        Log.ERROR -> "ERROR"
-        Log.ASSERT -> "ASSERT"
-        else -> "NONE"
-    }
 }

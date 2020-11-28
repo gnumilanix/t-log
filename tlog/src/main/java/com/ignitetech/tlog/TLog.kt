@@ -26,9 +26,8 @@ object TLog {
 
     fun initialize(
         context: Context,
-        deviceId: String,
         expiryTimeInSeconds: Int = EXPIRY_TIME,
-        logFormat: LogFormat = DefaultLogFormat(deviceId)
+        logFormat: LogFormat = DefaultLogFormat()
     ) {
         synchronized(TLog::class.java) {
             this.logFormat = logFormat

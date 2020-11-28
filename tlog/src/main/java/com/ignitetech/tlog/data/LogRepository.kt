@@ -1,5 +1,7 @@
 package com.ignitetech.tlog.data
 
+import android.os.Build
+import com.ignitetech.tlog.getCurrentTime
 import com.ignitetech.tlog.getFormattedTime
 import java.util.*
 import kotlin.math.ceil
@@ -7,7 +9,7 @@ import kotlin.math.ceil
 internal class LogRepository(private val logDao: LogDao) {
     suspend fun addLog(tag: String, logLevel: Int, log: String) {
         if (log.isNotEmpty()) {
-            logDao.addLogs(LogModel(0, tag, logLevel, log))
+            logDao.addLogs(LogModel(0, getCurrentTime(), Build.VERSION.SDK_INT, tag, logLevel, log))
         }
     }
 

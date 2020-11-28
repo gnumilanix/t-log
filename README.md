@@ -7,7 +7,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        TLog.initialize(this, getDeviceId())
+        TLog.initialize(this)
         TLog.setLogLevel(Log.VERBOSE)
     }
 }
@@ -119,6 +119,40 @@ class TLogTree : Timber.Tree() {
             Log.ERROR -> TLog.e(updatedTag, message)
             Log.WARN -> TLog.w(updatedTag, message)
         }
+    }
+}
+```
+
+# Consuming Logs
+### Log JSON Body
+```json
+[{
+	"time": "2020-11-26T04:14:23.021Z",
+	"androidVersion": 26,
+	"log": "Failed to register device",
+	"logLevel": 6,
+	"tag": "com.ignitetech.xyz.Application"
+}]
+```
+
+### Backend (Spring)
+```kotlin
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+
+@RestController
+@RequestMapping("/logs")
+class LogController(val logService: LogService) {
+
+    @PostMapping
+    fun addLogs(
+            @RequestHeader
+            headers: Map<String, String>,
+
+            @RequestPart("logs")
+            logs: MultipartFile
+    ) {
+        logService.addLogs(headers, logs)
     }
 }
 ```

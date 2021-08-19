@@ -229,6 +229,7 @@ object TLog {
         val logs = getLogs(false, 1, limit)
 
         if (logs.isNotEmpty() && dispatcher(logs)) {
+            deleteLogs(logs)
             deleteLogs(limit * 2)
         }
     }

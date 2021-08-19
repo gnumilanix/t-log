@@ -17,6 +17,14 @@ internal class LogRepository(private val logDao: LogDao) {
         logDao.deleteAll()
     }
 
+    suspend fun clearSavedLogs(offset:Int) {
+        if (offset < 0) {
+            throw IllegalStateException("Page must not be zero or negative")
+        }
+
+        logDao.deleteAll(offset)
+    }
+
     suspend fun getLogs(page: Int, limit: Int = LIMIT): List<LogModel> {
         if (page < 0) {
             throw IllegalStateException("Page must not be zero or negative")
@@ -48,6 +56,6 @@ internal class LogRepository(private val logDao: LogDao) {
     }
 
     companion object {
-        private const val LIMIT = 5000
+        const val LIMIT = 500
     }
 }

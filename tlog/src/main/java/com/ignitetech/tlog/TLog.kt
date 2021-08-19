@@ -152,8 +152,8 @@ object TLog {
      * @return List of [LogModel] or empty list if batch number is greater than the
      * [TLog.getLogPages]
      */
-    suspend fun getLogs(deleteLogs: Boolean, page: Int): List<LogModel> {
-        return logRepository?.getLogs(page)?.also {
+    suspend fun getLogs(deleteLogs: Boolean, page: Int, limit: Int = LogRepository.LIMIT): List<LogModel> {
+        return logRepository?.getLogs(page, limit)?.also {
             if (deleteLogs) {
                 deleteLogs(it)
             }
@@ -195,13 +195,20 @@ object TLog {
         logRepository?.clearSavedLogs()
     }
 
+    /**
+     * Call this method to delete all logs from device with an offset.
+     */
+    suspend fun deleteLogs(offset:Int) {
+        logRepository?.clearSavedLogs(offset)
+    }
+
     suspend fun deleteLogs(logs: List<LogModel>) {
         logRepository?.clearLogs(logs)
     }
 
-    suspend fun dispatchLogs(dispatcher: suspend (page: Int, logs: List<LogModel>) -> Boolean) {
+    suspend fun dispatchLogs(dispatcher: suspend (page: Int, logs: List<LogModel>) -> Boolean, limit: Int = LogRepository.LIMIT) {
         for (page in 0..getLogPages()) {
-            val logs = getLogs(false, page)
+            val logs = getLogs(false, page ,limit)
 
             if (logs.isEmpty()) {
                 break
@@ -210,6 +217,19 @@ object TLog {
             if (dispatcher(page, logs)) {
                 deleteLogs(logs)
             }
+        }
+    }
+
+    suspend fun dispatchLogsAndDeleteRest(dispatcher: suspend (logs: List<LogModel>) -> Boolean, limit: Int = LogRepository.LIMIT){
+        val pages = getLogPages()
+
+        if (pages <= 0) {
+            return
+        }
+        val logs = getLogs(false, 1, limit)
+
+        if (logs.isNotEmpty() && dispatcher(logs)) {
+            deleteLogs(limit * 2)
         }
     }
 }

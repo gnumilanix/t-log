@@ -55,7 +55,7 @@ retrofit.converter_gson = "com.squareup.retrofit2:converter-gson:${versions.retr
 deps.retrofit = retrofit
 
 def build_versions = [:]
-build_versions.min_sdk = 26
+build_versions.min_sdk = 24
 build_versions.compile_sdk = 29
 build_versions.target_sdk = 29
 build_versions.build_tools = "30.0.2"

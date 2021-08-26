@@ -25,9 +25,9 @@ object TLog {
     private var logFormat: LogFormat? = null
 
     fun initialize(
-        context: Context,
-        expiryTimeInSeconds: Int = EXPIRY_TIME,
-        logFormat: LogFormat = DefaultLogFormat()
+            context: Context,
+            expiryTimeInSeconds: Int = EXPIRY_TIME,
+            logFormat: LogFormat = DefaultLogFormat()
     ) {
         synchronized(TLog::class.java) {
             this.logFormat = logFormat
@@ -153,9 +153,9 @@ object TLog {
      * [TLog.getLogPages]
      */
     suspend fun getLogs(
-        deleteLogs: Boolean,
-        page: Int,
-        limit: Int = LogRepository.LIMIT
+            deleteLogs: Boolean,
+            page: Int,
+            limit: Int = LogRepository.LIMIT
     ): List<LogModel> {
         return logRepository?.getLogs(page, limit)?.also {
             if (deleteLogs) {
@@ -211,8 +211,8 @@ object TLog {
     }
 
     suspend fun dispatchLogs(
-        dispatcher: suspend (page: Int, logs: List<LogModel>) -> Boolean,
-        limit: Int = LogRepository.LIMIT
+            dispatcher: suspend (page: Int, logs: List<LogModel>) -> Boolean,
+            limit: Int = LogRepository.LIMIT
     ) {
         for (page in 0..getLogPages()) {
             val logs = getLogs(false, page, limit)
@@ -228,8 +228,8 @@ object TLog {
     }
 
     suspend fun dispatchLogsAndDeleteRest(
-        dispatcher: suspend (logs: List<LogModel>) -> Boolean,
-        limit: Int = LogRepository.LIMIT
+            dispatcher: suspend (logs: List<LogModel>) -> Boolean,
+            limit: Int = LogRepository.LIMIT
     ) {
         val pages = getLogPages()
 

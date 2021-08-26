@@ -23,6 +23,6 @@ interface LogDao {
     @Query("DELETE FROM Log")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM Log WHERE id > (SELECT id FROM Log LIMIT 1 OFFSET :offset)")
-    suspend fun deleteAll(offset: Int)
+    @Query("DELETE FROM Log WHERE id > (SELECT id FROM Log LIMIT 1 OFFSET :offset) OR logLevel < :logLevel")
+    suspend fun deleteAll(offset: Int, logLevel: Int)
 }

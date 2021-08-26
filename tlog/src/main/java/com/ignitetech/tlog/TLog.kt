@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 object TLog {
     private const val TAG_ASSERT = "ASSERT"
-    private val EXPIRY_TIME = TimeUnit.DAYS.toSeconds(7).toInt()
+    private val EXPIRY_TIME = TimeUnit.HOURS.toSeconds(12).toInt()
     private var logLevel = Log.WARN
 
     private val serviceJob = Job()
@@ -152,7 +152,11 @@ object TLog {
      * @return List of [LogModel] or empty list if batch number is greater than the
      * [TLog.getLogPages]
      */
-    suspend fun getLogs(deleteLogs: Boolean, page: Int, limit: Int = LogRepository.LIMIT): List<LogModel> {
+    suspend fun getLogs(
+        deleteLogs: Boolean,
+        page: Int,
+        limit: Int = LogRepository.LIMIT
+    ): List<LogModel> {
         return logRepository?.getLogs(page, limit)?.also {
             if (deleteLogs) {
                 deleteLogs(it)
@@ -196,19 +200,22 @@ object TLog {
     }
 
     /**
-     * Call this method to delete all logs from device with an offset.
+     * Call this method to delete all logs from device with an offset and all logs below current log level.
      */
-    suspend fun deleteLogs(offset:Int) {
-        logRepository?.clearSavedLogs(offset)
+    suspend fun deleteLogs(offset: Int) {
+        logRepository?.clearSavedLogs(offset, logLevel)
     }
 
     suspend fun deleteLogs(logs: List<LogModel>) {
         logRepository?.clearLogs(logs)
     }
 
-    suspend fun dispatchLogs(dispatcher: suspend (page: Int, logs: List<LogModel>) -> Boolean, limit: Int = LogRepository.LIMIT) {
+    suspend fun dispatchLogs(
+        dispatcher: suspend (page: Int, logs: List<LogModel>) -> Boolean,
+        limit: Int = LogRepository.LIMIT
+    ) {
         for (page in 0..getLogPages()) {
-            val logs = getLogs(false, page ,limit)
+            val logs = getLogs(false, page, limit)
 
             if (logs.isEmpty()) {
                 break
@@ -220,7 +227,10 @@ object TLog {
         }
     }
 
-    suspend fun dispatchLogsAndDeleteRest(dispatcher: suspend (logs: List<LogModel>) -> Boolean, limit: Int = LogRepository.LIMIT){
+    suspend fun dispatchLogsAndDeleteRest(
+        dispatcher: suspend (logs: List<LogModel>) -> Boolean,
+        limit: Int = LogRepository.LIMIT
+    ) {
         val pages = getLogPages()
 
         if (pages <= 0) {
